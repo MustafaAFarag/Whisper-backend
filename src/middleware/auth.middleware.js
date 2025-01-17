@@ -1,47 +1,39 @@
-// auth.middleware.js
 import jwt from "jsonwebtoken";
 import User from "../models/user.model.js";
 
-export const protectRoute = async (req, res, next) => {
+export const protectRoute = async (request, response, next) => {
   try {
-    const token = req.cookies.jwt;
+    const token = request.cookies.jwt;
 
     if (!token) {
-      return res.status(401).json({
-        message: "Authentication required",
+      return response.status(401).json({
+        message: "Unauthroized - No Token Provided",
       });
     }
 
-    try {
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      const user = await User.findById(decoded.userId).select("-password");
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-      if (!user) {
-        return res.status(401).json({
-          message: "User not found",
-        });
-      }
-
-      req.user = user;
-      next();
-    } catch (jwtError) {
-      console.log("JWT Verification Error:", jwtError.message);
-
-      // Clear the invalid cookie
-      res.clearCookie("jwt", {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-      });
-
-      return res.status(401).json({
-        message: "Session expired. Please login again.",
+    if (!decoded) {
+      return response.status(401).json({
+        message: "Unauthroized - Invaild Token",
       });
     }
+
+    const user = await User.findById(decoded.userId).select("-password");
+
+    if (!user) {
+      return response.status(404).json({
+        message: "User not Found",
+      });
+    }
+
+    request.user = user;
+
+    next();
   } catch (error) {
-    console.error("Error in protectRoute:", error);
-    res.status(500).json({
-      message: "Internal server error",
+    console.log("Error in ProtectRoute middleware", error.message);
+    response.status(500).json({
+      message: "Internal Server Error",
     });
   }
 };
