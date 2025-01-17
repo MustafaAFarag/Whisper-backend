@@ -70,6 +70,8 @@ export const sendMessage = async (request, response) => {
     const receiverSocketId = getReceiverSocketId(receiverId);
     if (receiverSocketId) {
       io.to(receiverSocketId).emit("newMessage", newMessage);
+    } else {
+      console.log("Receiver not connected");
     }
 
     response.status(201).json(newMessage);
