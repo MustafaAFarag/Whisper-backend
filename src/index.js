@@ -19,7 +19,10 @@ app.use(
   cors({
     origin:
       process.env.NODE_ENV === "production"
-        ? "https://chatapp-whisper.netlify.app"
+        ? [
+            "https://chatapp-whisper.netlify.app",
+            "https://chatapp-whisper.netlify.app",
+          ]
         : "http://localhost:5173",
     credentials: true,
   })
