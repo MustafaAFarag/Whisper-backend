@@ -6,17 +6,16 @@ export const protectRoute = async (request, response, next) => {
     const token = request.cookies.jwt;
 
     if (!token) {
-      return response.status(401).json({
-        message: "Unauthroized - No Token Provided",
-      });
+      return response
+        .status(401)
+        .json({ message: "Unauthorized - No Token Provided" });
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
     if (!decoded) {
-      return response.status(401).json({
-        message: "Unauthroized - Invaild Token",
-      });
+      return response
+        .status(401)
+        .json({ message: "Unauthorized - Invalid Token" });
     }
 
     const user = await User.findById(decoded.userId).select("-password");
