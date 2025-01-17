@@ -5,11 +5,11 @@ export const generateToken = (userId, response) => {
     expiresIn: "7d",
   });
 
-  response.cookie("jwt", token, {
-    maxAge: 7 * 24 * 60 * 60 * 1000,
-    httpOnly: true, // prevent XSS Attacks (cross-stie scripting attacks)
-    sameSite: "none", // CSRF attacks cross-site
-    secure: process.env.NODE_ENV !== "development",
+  rres.cookie("jwt", token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+    maxAge: 15 * 24 * 60 * 60 * 1000, // 15 days
   });
 
   return token;
