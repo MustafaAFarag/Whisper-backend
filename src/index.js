@@ -17,7 +17,10 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin:
+      process.env.NODE_ENV === "production"
+        ? "https://chatapp-whisper.netlify.app" // Netlify frontend URL in production
+        : "http://localhost:5173", // Local development URL
     credentials: true,
   })
 );
@@ -26,7 +29,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRoutes);
 
 if (process.env.NODE_ENV === "production") {
-  app.use(express.static(path.join(__dirname, "../client/dist"))); // Use __dirname to get the correct path
+  app.use(express.static(path.join(__dirname, "../client/dist"))); // Use dist from the frontend
   app.get("*", (request, response) => {
     response.sendFile(path.join(__dirname, "../client", "dist", "index.html"));
   });
