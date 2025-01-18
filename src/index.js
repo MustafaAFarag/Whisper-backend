@@ -21,7 +21,7 @@ app.use(
       process.env.NODE_ENV === "production"
         ? "https://chatapp-whisper.netlify.app" // Netlify frontend URL in production
         : "http://localhost:5173", // Local development URL
-    credentials: true,
+    credentials: true, // Allow cookies to be sent
   })
 );
 

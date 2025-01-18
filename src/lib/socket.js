@@ -11,6 +11,8 @@ const io = new Server(server, {
       process.env.NODE_ENV === "production"
         ? "https://chatapp-whisper.netlify.app" // Netlify frontend URL
         : "http://localhost:5173", // Local development URL
+    methods: ["GET", "POST"], // Ensure the methods are correct
+    credentials: true, // Allow credentials to be sent in CORS
   },
 });
 
@@ -18,7 +20,7 @@ export function getReceiverSocketId(userId) {
   return userSocketMap[userId];
 }
 
-// used to store online users
+// Used to store online users
 const userSocketMap = {};
 
 io.on("connection", (socket) => {
